@@ -1,84 +1,153 @@
-// const catMe = require('cat-me')
-
-// console.log(catMe());
-
-const http = require('http')
-
-const server = http.createServer((req, res) => {
-    // console.log(req.url);
-    // res.end('hello world')
+// const CatMe = require('cat-me');
+// console.log(CatMe())
 
 
-    // creating routing
-    if (req.url == "/about") {
-        res.end('the about page');
-    }
+// server is created not run
+// const http = require('http')
 
-    if (req.url == "/profile") {
-        res.end("the profile page")
-    }
+// const server = http.createServer((req, res) => {
 
-    if (req.url == '/') {
-        res.end('the home page')
-    }
-})
+
+//     if (req.url == '/about') {
+//         res.end('welcome to the abpout page')
+//     }
+//     if (req.url == '/profile') {
+//         res.end('wecome to the profile page');
+
+//     }
+//     if(req.url == "/"){
+//         res.end("the home page");
+//     }
+//     if(req.url == "/Contact"){
+//         res.end("thanks for contact me")
+//     }
+
+// });
 
 // server.listen(3000)
 
 
-// express
+// express is like a tool box
 const express = require('express');
-const morgan = require('morgan')
+const app = express();
+const morgan = require('morgan');
 
-const app = express();  //that tool present in it is now open when we call it that the date or tool is now present in app
+const dbConnection = require('./config/db')
+const userModel = require('./models/user')
 
+
+// morgan logger
+// third party middle ware
 app.use(morgan('dev'))
 
-// custom middlware (built by own)
+// built-in middleware
+// usig it for getting date from the req.body
+app.use(express.json())
+app.use(express.urlencoded({extended: true}))
+app.use(express.static('public'))
+
 
 app.set("view engine", 'ejs')
 
-app.use((req, res, next) => {
-    console.log("midddleWare")
+// middleware
+// custom middleware
+// app.use((req, res, next) => {
 
-    a = 23;
-    b = 23;
+//     console.log("this is middleware");
+//     // res.send("middleware")
 
-    console.log(a + b);
+//     const a = 34;
+//     const b = 21;
 
-    return next()
-})
+//     console.log("sum of the number : " + a + b);
+
+//     return next()
+// })
 
 
+app.get('/',
+    
+//     (req, res, next) => {
+//     const a = 3;
+//     const b = 4;
+//     console.log(a + b);
 
-app.get('/', 
-    (req, res, next) =>{
-
-    const a = 3
-    const b = 3
-
-    console.log(a + b)
-
-    next()
-
-},
+//     next();  // it will pass the control over the other functions or statment 
+// }, 
 
 (req, res) => {
     res.render('index')
 })
 
-
-// creating routing through express
 app.get('/', (req, res) => {
-    res.send('hellow world from express!')
-})
+    res.send('hello world priyanka')
+});
 
 app.get('/about', (req, res) => {
-    res.send('the about page')
-})
+    res.send('the about papge')
+});
 
 app.get('/profile', (req, res) => {
-    res.send('the profile Page')
+    res.send("the Profile page")
 })
 
-// app.listen(3000)
+app.get('/register', (req, res) => {
+    res.render('register')
+})
+
+app.post('/register', async (req, res) => {
+
+    const { username, email, password } = req.body;
+
+ const newUser = await userModel.create({
+        username: username,
+        email: email,
+        password: password
+    })
+    // console.log(req.body)
+    res.send(newUser)
+});
+
+app.get('/get-users', (req, res) => {
+    userModel.find({
+        username: 'a'
+    }).then((users) => {
+        res.send(users)
+    })
+})
+
+
+app.get('/update-user', async (req, res) => {
+   await userModel.findOneAndUpdate({
+        username: 'a'
+
+    }, {
+        email: 'c@cgamil.com'
+    }),
+
+    res.send('data updated')
+})
+
+
+app.get('/delete-user', async (req, res) => {
+    await userModel.findOneAndDelete({
+        username: 'a'
+    })
+
+    res.send('user deleted')
+})
+
+// get : server se data  frontend tak 
+// app.get('/get-form-data', (req, res) => {
+//     console.log(req.query)
+//     res.send('data received')
+// })
+
+// post : frontend se data backend tak mangane me help karti hai
+app.post('/get-form-data', (req, res) => {
+    console.log(req.body)
+    res.send('data received');
+});
+
+
+app.listen(3000)

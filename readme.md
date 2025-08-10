@@ -13,3 +13,23 @@ It is a template engine used with Node.js.
 Helps to generate HTML with JavaScript code inside.
 
 File extension: .ejs
+
+-package is a resuable code 
+
+- with the help of express we can create route and server
+
+- morgan -> HTTP  request logger middleware for nodejs 
+
+- post : it will help to receive data from frontend to backend(server)
+- get : data will pass from server to the frontend
+
+
+- types of middle ware :  
+- custom middleware
+- Third party middleware
+- built-in middleware
+
+
+- monogodb
+- collection of the data
+db is storing the data alongwith store in such a way if later read easily we can read it 
